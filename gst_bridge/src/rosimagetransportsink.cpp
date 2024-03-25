@@ -197,10 +197,9 @@ static gboolean rosimagetransportsink_open(RosBaseSink * ros_base_sink)
 {
   Rosimagetransportsink * sink = GST_ROSIMAGETRANSPORTSINK(ros_base_sink);
   GST_DEBUG_OBJECT(sink, "open");
-  rclcpp::QoS qos = rclcpp::SensorDataQoS().reliable();  //XXX add a parameter for overrides
 
-  sink->pub = rclcpp::create_publisher<sensor_msgs::msg::Image>(
-    ros_base_sink->node_if->parameters, ros_base_sink->node_if->topics, sink->pub_topic, qos);
+  image_transport::ImageTransport it(ros_base_sink->local_node.node);
+  sink->pub = it.advertise(sink->pub_topic, 10);
 
   return TRUE;
 }
@@ -210,7 +209,7 @@ static gboolean rosimagetransportsink_close(RosBaseSink * ros_base_sink)
 {
   Rosimagetransportsink * sink = GST_ROSIMAGETRANSPORTSINK(ros_base_sink);
   GST_DEBUG_OBJECT(sink, "close");
-  sink->pub.reset();
+  sink->pub.shutdown();
   return TRUE;
 }
 
@@ -321,7 +320,7 @@ static GstFlowReturn rosimagetransportsink_render(
   gst_buffer_unmap(buf, &info);
 
   //publish
-  sink->pub->publish(msg);
+  sink->pub.publish(msg);
 
   return GST_FLOW_OK;
 }

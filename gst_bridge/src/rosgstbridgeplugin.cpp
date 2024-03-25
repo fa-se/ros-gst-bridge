@@ -24,6 +24,7 @@
 #include <gst_bridge/rosaudiosink.h>
 #include <gst_bridge/rosaudiosrc.h>
 #include <gst_bridge/rosimagesink.h>
+#include <gst_bridge/rosimagetransportsink.h>
 #include <gst_bridge/rosimagesrc.h>
 #include <gst_bridge/rostextsink.h>
 #include <gst_bridge/rostextsrc.h>
@@ -36,6 +37,8 @@ static gboolean plugin_init(GstPlugin * plugin)
   gst_element_register(plugin, "rosaudiosink", GST_RANK_NONE, GST_TYPE_ROSAUDIOSINK);
 
   gst_element_register(plugin, "rosimagesink", GST_RANK_NONE, GST_TYPE_ROSIMAGESINK);
+
+  gst_element_register(plugin, "rosimagetransportsink", GST_RANK_NONE, GST_TYPE_ROSIMAGETRANSPORTSINK);
 
   gst_element_register(plugin, "rostextsink", GST_RANK_NONE, GST_TYPE_ROSTEXTSINK);
 

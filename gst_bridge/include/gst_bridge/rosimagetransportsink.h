@@ -28,6 +28,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/image.hpp>
 
+#include <image_transport/image_transport.hpp>
+
 G_BEGIN_DECLS
 
 #define GST_TYPE_ROSIMAGETRANSPORTSINK (rosimagetransportsink_get_type())
@@ -50,7 +52,7 @@ struct _Rosimagetransportsink
   gchar * encoding;   //image topic encoding string
   gchar * init_caps;  //optional caps override (used for limited apis)
 
-  rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub;
+  image_transport::Publisher pub;
 
   int height;
   int width;
