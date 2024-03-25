@@ -26,7 +26,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-
+find_package(image_transport REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
@@ -99,6 +99,7 @@ add_library(rosgstbridge SHARED
   src/rosgstbridgeplugin.cpp
   src/rosaudiosink.cpp
   src/rosimagesink.cpp
+  src/rosimagetransportsink.cpp
   src/rostextsink.cpp
   src/rosaudiosrc.cpp
   src/rosimagesrc.cpp
@@ -126,6 +127,7 @@ target_link_libraries(rosgstbridge PUBLIC
   ${rclcpp_LIBRARIES}
   ${sensor_msgs_LIBRARIES}
   ${audio_msgs_LIBRARIES}
+  image_transport::image_transport
   ${GLIB_LIBRARIES}
   ${GLIB_GIO_LIBRARIES}
   ${GLIB_GOBJECT_LIBRARIES}
