@@ -50,6 +50,7 @@ struct _Rosimagetransportsink
   gchar * pub_topic;
   gchar * frame_id;
   gchar * encoding;   //image topic encoding string
+  gchar * ffmpeg_transport_encoder; // encoder to be used by ffmpeg-image-transport (if available)
   gchar * init_caps;  //optional caps override (used for limited apis)
 
   image_transport::Publisher pub;

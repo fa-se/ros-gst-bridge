@@ -59,6 +59,7 @@ enum {
   PROP_ROS_TOPIC,
   PROP_ROS_FRAME_ID,
   PROP_ROS_ENCODING,
+  PROP_FFMPEG_TRANSPORT_ENCODER
 };
 
 /* pad templates */
@@ -109,6 +110,12 @@ static void rosimagetransportsink_class_init(RosimagetransportsinkClass * klass)
       "ros-encoding", "encoding-string", "A hack to flexibly set the encoding string", "",
       (GParamFlags)(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
+  g_object_class_install_property(
+    object_class, PROP_FFMPEG_TRANSPORT_ENCODER,
+    g_param_spec_string(
+      "ffmpeg-transport-encoder", "ffmpeg-transport-encoder", "Encoder to be used by ffmpeg-image-transport. Cannot be changed at runtime. Examples: libx264, h264_nvenc, hevc_nvenc", "libx264",
+      (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT | G_PARAM_STATIC_STRINGS)));
+
   //access gstreamer base sink events here
   basesink_class->set_caps =
     GST_DEBUG_FUNCPTR(rosimagetransportsink_setcaps);  //gstreamer informs us what caps we're using.
@@ -129,6 +136,7 @@ static void rosimagetransportsink_init(Rosimagetransportsink * sink)
   sink->pub_topic = g_strdup("gst_image_pub");
   sink->frame_id = g_strdup("image_frame");
   sink->encoding = g_strdup("");
+  sink->ffmpeg_transport_encoder = g_strdup("libx264");
   sink->init_caps = g_strdup("");
 }
 
@@ -160,6 +168,11 @@ void rosimagetransportsink_set_property(
       g_free(sink->encoding);
       sink->encoding = g_value_dup_string(value);
       break;
+    
+    case PROP_FFMPEG_TRANSPORT_ENCODER:
+      g_free(sink->ffmpeg_transport_encoder);
+      sink->ffmpeg_transport_encoder = g_value_dup_string(value);
+      break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
@@ -186,6 +199,10 @@ void rosimagetransportsink_get_property(
       g_value_set_string(value, sink->encoding);
       break;
 
+    case PROP_FFMPEG_TRANSPORT_ENCODER:
+      g_value_set_string(value, sink->ffmpeg_transport_encoder);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
       break;
@@ -198,7 +215,21 @@ static gboolean rosimagetransportsink_open(RosBaseSink * ros_base_sink)
   Rosimagetransportsink * sink = GST_ROSIMAGETRANSPORTSINK(ros_base_sink);
   GST_DEBUG_OBJECT(sink, "open");
 
-  image_transport::ImageTransport it(ros_base_sink->local_node.node);
+  auto node = ros_base_sink->local_node.node;
+
+  /* ffmpeg transport exposes the encoder to be used as a ros parameter.
+     it cannot be changed at runtime. setting them from the cli at launch is difficult,
+     because ros-gst-bridge plugins wrap ros nodes internally and are not launched directly. 
+     that's why this parameter is exposed as a plugin property and set here before
+     constructing the transport. */
+  auto encoder = sink->ffmpeg_transport_encoder;
+
+  node->declare_parameter("ffmpeg_image_transport.encoding", encoder);
+  rclcpp::Parameter str_param("ffmpeg_image_transport.encoding", encoder);
+  node->set_parameter(str_param);
+
+  image_transport::ImageTransport it(node);
+
   sink->pub = it.advertise(sink->pub_topic, 10);
 
   return TRUE;
