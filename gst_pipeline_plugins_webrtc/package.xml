@@ -6,17 +6,18 @@
   <description>Run GStreamer pipelines in ROS</description>
   <maintainer email="brettrd@brettrd.com">brettrd</maintainer>
   <license>LGPLv3</license>
-
-
+ 
+ 
   <buildtool_depend>ament_cmake</buildtool_depend>
-
+ 
   <build_depend>rclcpp</build_depend>
   <build_depend>rclcpp_components</build_depend>
-
+ 
   <build_depend>libgstreamer1.0-dev</build_depend>
   <build_depend>libgstreamer-plugins-base1.0-dev</build_depend>
-  <build_depend>libsoup2.4-dev</build_depend>
-
+  <build_depend>libgstreamer-plugins-bad1.0-dev</build_depend>
+  <build_depend>libsoup2-dev</build_depend>
+ 
   <build_depend>std_msgs</build_depend>
   <build_depend>gst_msgs</build_depend>
   <build_depend>audio_msgs</build_depend>
@@ -25,13 +26,14 @@
   
   <build_depend>gst_bridge</build_depend>
   <build_depend>gst_pipeline</build_depend>
-
+  <build_depend>libjson-glib</build_depend>
+ 
   <test_depend>ament_cmake_clang_format</test_depend>
-
+ 
   <exec_depend>rclcpp_components</exec_depend>
   <exec_depend>image_transport</exec_depend>
   <exec_depend>cv_bridge</exec_depend>
-
+ 
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>gst_msgs</exec_depend>
   <exec_depend>audio_msgs</exec_depend>
@@ -39,11 +41,12 @@
   <exec_depend>gstreamer1.0</exec_depend>
   <exec_depend>gstreamer1.0-plugins-base</exec_depend>
   <exec_depend>gstreamer1.0-plugins-good</exec_depend>
-
+  <exec_depend>libgstreamer-plugins-bad1.0-dev</exec_depend>
+ 
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>osrf_testing_tools_cpp</test_depend>
   <test_depend>rclcpp</test_depend>
-
+ 
   <export>
     <build_type>ament_cmake</build_type>
   </export>
